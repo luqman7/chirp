@@ -9,11 +9,14 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { LoadingPage } from "~/components/loading";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 const Home: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
+
+  const [input, setInput] = useState("");
 
   //  start fetching asap
   api.posts.getAll.useQuery();
@@ -22,6 +25,8 @@ const Home: NextPage = () => {
 
   const CreatePostWizard = () => {
     const { user } = useUser();
+
+    const { mutate } = api.posts.create.useMutation();
 
     console.log(user);
 
@@ -40,7 +45,10 @@ const Home: NextPage = () => {
           type="text"
           placeholder="Type some emojis"
           className="grow bg-transparent outline-none"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
         />
+        <button onClick={() => mutate({ content: input })}></button>
       </div>
     );
   };
